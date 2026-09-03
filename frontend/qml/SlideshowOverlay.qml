@@ -1,6 +1,5 @@
 import QtQuick
 import QtQuick.Controls
-import QtQuick.Layouts
 import QtQuick.Window
 
 Item {
@@ -10,7 +9,7 @@ Item {
 
     signal closed()
 
-    property int intervalMs: 3000
+    property int intervalMs: 5000
     property bool playing: true
     property bool expanded: false
 
@@ -54,43 +53,77 @@ Item {
 
     MouseArea {
         anchors.fill: parent
-        onClicked: controls.visible = !controls.visible
+        onClicked: controlsScroll.visible = !controlsScroll.visible
     }
 
-    RowLayout {
-        id: controls
+    ScrollView {
+        id: controlsScroll
         anchors.bottom: parent.bottom
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.bottomMargin: 24
-        spacing: 10
+        width: Math.min(parent.width - 40, controls.implicitWidth)
+        height: controls.implicitHeight
+        clip: true
+        ScrollBar.vertical.policy: ScrollBar.AlwaysOff
 
-        RoundedToolButton {
-            icon.name: "media-seek-backward-symbolic"
-            ToolTip.text: "Previous"
-            ToolTip.visible: hovered
-            onClicked: backend.openImage(backend.folderModel.previous())
-        }
-        RoundedToolButton {
-            icon.name: root.playing ? "media-playback-pause-symbolic" : "media-playback-start-symbolic"
-            ToolTip.text: root.playing ? "Pause" : "Play"
-            ToolTip.visible: hovered
-            onClicked: root.playing = !root.playing
-        }
-        RoundedToolButton {
-            icon.name: "media-seek-forward-symbolic"
-            ToolTip.text: "Next"
-            ToolTip.visible: hovered
-            onClicked: backend.openImage(backend.folderModel.next())
-        }
-        RoundedButton {
-            text: root.expanded ? "Exit Fullscreen" : "Fullscreen"
-            icon.name: root.expanded ? "view-restore-symbolic" : "view-fullscreen-symbolic"
-            onClicked: root.toggleFullscreen()
-        }
-        RoundedButton {
-            text: "Close"
-            icon.name: "window-close-symbolic"
-            onClicked: root.requestClose()
+        Row {
+            id: controls
+            spacing: 10
+
+            RoundedToolButton {
+                icon.name: "media-seek-backward-symbolic"
+                ToolTip.text: "Previous"
+                ToolTip.visible: hovered
+                onClicked: backend.openImage(backend.folderModel.previous())
+            }
+            RoundedToolButton {
+                icon.name: root.playing ? "media-playback-pause-symbolic" : "media-playback-start-symbolic"
+                ToolTip.text: root.playing ? "Pause" : "Play"
+                ToolTip.visible: hovered
+                onClicked: root.playing = !root.playing
+            }
+            RoundedToolButton {
+                icon.name: "media-seek-forward-symbolic"
+                ToolTip.text: "Next"
+                ToolTip.visible: hovered
+                onClicked: backend.openImage(backend.folderModel.next())
+            }
+
+            ToolSeparator {}
+
+            Label {
+                anchors.verticalCenter: parent.verticalCenter
+                text: "Interval"
+                color: "#dddddd"
+            }
+            Slider {
+                id: intervalSlider
+                anchors.verticalCenter: parent.verticalCenter
+                from: 5
+                to: 30
+                stepSize: 1
+                value: root.intervalMs / 1000
+                width: 110
+                onMoved: root.intervalMs = value * 1000
+            }
+            Label {
+                anchors.verticalCenter: parent.verticalCenter
+                text: Math.round(intervalSlider.value) + "s"
+                color: "#dddddd"
+            }
+
+            ToolSeparator {}
+
+            RoundedButton {
+                text: root.expanded ? "Exit Fullscreen" : "Fullscreen"
+                icon.name: root.expanded ? "view-restore-symbolic" : "view-fullscreen-symbolic"
+                onClicked: root.toggleFullscreen()
+            }
+            RoundedButton {
+                text: "Close"
+                icon.name: "window-close-symbolic"
+                onClicked: root.requestClose()
+            }
         }
     }
 
