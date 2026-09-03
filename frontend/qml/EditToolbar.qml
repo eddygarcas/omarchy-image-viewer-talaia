@@ -31,15 +31,15 @@ Item {
             spacing: 6
             padding: 8
 
-            ToolButton { text: "⟲"; ToolTip.text: "Rotate left"; ToolTip.visible: hovered; onClicked: backend.rotate(false) }
-            ToolButton { text: "⟳"; ToolTip.text: "Rotate right"; ToolTip.visible: hovered; onClicked: backend.rotate(true) }
-            ToolButton { text: "⇋"; ToolTip.text: "Flip horizontal"; ToolTip.visible: hovered; onClicked: backend.flip(true) }
-            ToolButton { text: "⇅"; ToolTip.text: "Flip vertical"; ToolTip.visible: hovered; onClicked: backend.flip(false) }
+            RoundedToolButton { text: "⟲"; ToolTip.text: "Rotate left"; ToolTip.visible: hovered; onClicked: backend.rotate(false) }
+            RoundedToolButton { text: "⟳"; ToolTip.text: "Rotate right"; ToolTip.visible: hovered; onClicked: backend.rotate(true) }
+            RoundedToolButton { text: "⇋"; ToolTip.text: "Flip horizontal"; ToolTip.visible: hovered; onClicked: backend.flip(true) }
+            RoundedToolButton { text: "⇅"; ToolTip.text: "Flip vertical"; ToolTip.visible: hovered; onClicked: backend.flip(false) }
 
             ToolSeparator {}
 
-            ToolButton { text: "Crop"; onClicked: cropDialog.open() }
-            ToolButton { text: "Resize"; onClicked: resizeDialog.open() }
+            RoundedToolButton { text: "Crop"; onClicked: cropDialog.open() }
+            RoundedToolButton { text: "Resize"; onClicked: resizeDialog.open() }
 
             ToolSeparator {}
 
@@ -67,20 +67,19 @@ Item {
                 width: 90
                 onMoved: backend.adjust(brightnessSlider.value, contrastSlider.value, value)
             }
-            ToolButton { text: "Apply"; ToolTip.text: "Bake in the color adjustment"; ToolTip.visible: hovered; onClicked: backend.commitAdjust() }
+            RoundedToolButton { text: "Apply"; ToolTip.text: "Bake in the color adjustment"; ToolTip.visible: hovered; onClicked: backend.commitAdjust() }
 
             ToolSeparator {}
 
-            ToolButton { text: "↶"; ToolTip.text: "Undo"; ToolTip.visible: hovered; onClicked: backend.undo() }
-            ToolButton { text: "↷"; ToolTip.text: "Redo"; ToolTip.visible: hovered; onClicked: backend.redo() }
-            ToolButton { text: "Reset"; ToolTip.text: "Revert to the originally opened image"; ToolTip.visible: hovered; onClicked: backend.resetImage() }
+            RoundedToolButton { text: "↶"; ToolTip.text: "Undo"; ToolTip.visible: hovered; onClicked: backend.undo() }
+            RoundedToolButton { text: "↷"; ToolTip.text: "Redo"; ToolTip.visible: hovered; onClicked: backend.redo() }
+            RoundedToolButton { text: "Reset"; ToolTip.text: "Revert to the originally opened image"; ToolTip.visible: hovered; onClicked: backend.resetImage() }
         }
     }
 
     Dialog {
         id: cropDialog
         title: "Crop"
-        standardButtons: Dialog.Ok | Dialog.Cancel
         modal: true
         anchors.centerIn: Overlay.overlay
         onAboutToShow: {
@@ -102,12 +101,16 @@ Item {
             Label { text: "Height" }
             SpinBox { id: hSpin; from: 1; to: Math.max(1, backend.imageHeight) }
         }
+
+        footer: DialogButtonBox {
+            RoundedButton { text: "Cancel"; DialogButtonBox.buttonRole: DialogButtonBox.RejectRole }
+            RoundedButton { text: "OK"; DialogButtonBox.buttonRole: DialogButtonBox.AcceptRole }
+        }
     }
 
     Dialog {
         id: resizeDialog
         title: "Resize"
-        standardButtons: Dialog.Ok | Dialog.Cancel
         modal: true
         anchors.centerIn: Overlay.overlay
         onAboutToShow: {
@@ -122,6 +125,11 @@ Item {
             SpinBox { id: rwSpin; from: 1; to: 20000 }
             Label { text: "Height" }
             SpinBox { id: rhSpin; from: 1; to: 20000 }
+        }
+
+        footer: DialogButtonBox {
+            RoundedButton { text: "Cancel"; DialogButtonBox.buttonRole: DialogButtonBox.RejectRole }
+            RoundedButton { text: "OK"; DialogButtonBox.buttonRole: DialogButtonBox.AcceptRole }
         }
     }
 }

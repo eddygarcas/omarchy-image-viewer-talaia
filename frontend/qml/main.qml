@@ -59,8 +59,8 @@ ApplicationWindow {
                 spacing: 8
                 padding: 8
 
-                Button { text: "Open"; onClicked: openDialog.open() }
-                Button { text: "Save As"; enabled: backend.hasImage; onClicked: saveDialog.open() }
+                RoundedButton { text: "Open"; onClicked: openDialog.open() }
+                RoundedButton { text: "Save As"; enabled: backend.hasImage; onClicked: saveDialog.open() }
                 Label {
                     anchors.verticalCenter: parent.verticalCenter
                     leftPadding: 24
@@ -68,7 +68,7 @@ ApplicationWindow {
                     text: backend.hasImage ? (backend.imageWidth + " × " + backend.imageHeight) : ""
                     color: "#bbbbbb"
                 }
-                Button {
+                RoundedButton {
                     text: "Slideshow"
                     enabled: backend.hasImage && backend.folderModel.count > 1
                     onClicked: slideshowLoader.active = true

@@ -64,17 +64,34 @@ Item {
         anchors.bottomMargin: 24
         spacing: 10
 
-        Button { text: "⏮"; onClicked: backend.openImage(backend.folderModel.previous()) }
-        Button {
-            text: root.playing ? "⏸" : "⏵"
+        RoundedToolButton {
+            icon.name: "media-seek-backward-symbolic"
+            ToolTip.text: "Previous"
+            ToolTip.visible: hovered
+            onClicked: backend.openImage(backend.folderModel.previous())
+        }
+        RoundedToolButton {
+            icon.name: root.playing ? "media-playback-pause-symbolic" : "media-playback-start-symbolic"
+            ToolTip.text: root.playing ? "Pause" : "Play"
+            ToolTip.visible: hovered
             onClicked: root.playing = !root.playing
         }
-        Button { text: "⏭"; onClicked: backend.openImage(backend.folderModel.next()) }
-        Button {
+        RoundedToolButton {
+            icon.name: "media-seek-forward-symbolic"
+            ToolTip.text: "Next"
+            ToolTip.visible: hovered
+            onClicked: backend.openImage(backend.folderModel.next())
+        }
+        RoundedButton {
             text: root.expanded ? "Exit Fullscreen" : "Fullscreen"
+            icon.name: root.expanded ? "view-restore-symbolic" : "view-fullscreen-symbolic"
             onClicked: root.toggleFullscreen()
         }
-        Button { text: "Close"; onClicked: root.requestClose() }
+        RoundedButton {
+            text: "Close"
+            icon.name: "window-close-symbolic"
+            onClicked: root.requestClose()
+        }
     }
 
     Keys.onEscapePressed: root.requestClose()
