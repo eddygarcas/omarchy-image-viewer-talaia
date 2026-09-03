@@ -9,6 +9,11 @@ in fullscreen slideshow.
 
 ![Screenshot](docs/screenshot.png)
 
+Rotate, flip, and adjust an image, then slide through the rest of the
+folder in fullscreen:
+
+![Demo](docs/demo.gif)
+
 ## Features
 
 - Open any image `stb_image` supports: PNG, JPEG, BMP, GIF (static), TGA,
