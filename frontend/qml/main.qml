@@ -10,7 +10,7 @@ ApplicationWindow {
     minimumWidth: 480
     minimumHeight: 360
     visible: true
-    title: backend.hasImage ? (backend.currentPath.split("/").pop() + " — Image Viewer") : "Image Viewer"
+    title: backend.hasImage ? (backend.currentPath.split("/").pop() + " — Talaia") : "Talaia"
     color: "#1e1e1e"
 
     FileDialog {

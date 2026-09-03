@@ -37,6 +37,11 @@ qt_add_qml_module(image-viewer
         qml/SlideshowOverlay.qml
 )
 
+qt_add_resources(image-viewer "icon"
+    PREFIX "/"
+    FILES resources/icons/talaia.svg
+)
+
 target_include_directories(image-viewer PRIVATE ${BACKEND_INCLUDE})
 target_link_libraries(image-viewer PRIVATE Qt6::Core Qt6::Gui Qt6::Quick ${BACKEND_LIB})
 

@@ -1,0 +1,71 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <defs>
+    <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#1b2450"/>
+      <stop offset="45%" stop-color="#4a3a72"/>
+      <stop offset="75%" stop-color="#c9683f"/>
+      <stop offset="100%" stop-color="#f2a54a"/>
+    </linearGradient>
+    <linearGradient id="sea" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#2b6e73"/>
+      <stop offset="100%" stop-color="#123640"/>
+    </linearGradient>
+    <radialGradient id="sun" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#fff3d6"/>
+      <stop offset="55%" stop-color="#ffce6b"/>
+      <stop offset="100%" stop-color="#ff9f43" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="tower" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#2a3350"/>
+      <stop offset="100%" stop-color="#12172a"/>
+    </linearGradient>
+    <clipPath id="roundedSquare">
+      <rect x="0" y="0" width="512" height="512" rx="104" ry="104"/>
+    </clipPath>
+  </defs>
+
+  <g clip-path="url(#roundedSquare)">
+    <!-- Sky -->
+    <rect x="0" y="0" width="512" height="512" fill="url(#sky)"/>
+
+    <!-- Sun / beacon glow on the horizon -->
+    <circle cx="256" cy="336" r="150" fill="url(#sun)"/>
+    <circle cx="256" cy="336" r="64" fill="#ffe6b0"/>
+
+    <!-- Sea -->
+    <rect x="0" y="336" width="512" height="176" fill="url(#sea)"/>
+    <path d="M0 336 Q128 322 256 336 T512 336 V512 H0 Z" fill="url(#sea)"/>
+
+    <!-- Subtle wave highlights -->
+    <path d="M40 388 Q80 380 120 388 T200 388" stroke="#bfe6e2" stroke-width="6" stroke-linecap="round" fill="none" opacity="0.35"/>
+    <path d="M300 420 Q340 412 380 420 T460 420" stroke="#bfe6e2" stroke-width="6" stroke-linecap="round" fill="none" opacity="0.3"/>
+    <path d="M60 452 Q110 444 160 452 T260 452" stroke="#bfe6e2" stroke-width="6" stroke-linecap="round" fill="none" opacity="0.25"/>
+
+    <!-- Rocky outcrop -->
+    <path d="M170 360 L200 330 L235 348 L256 322 L280 350 L318 328 L344 360 L344 372 L170 372 Z" fill="#1a1f33"/>
+
+    <!-- Tower -->
+    <path d="M222 356 L232 150 L280 150 L292 356 Z" fill="url(#tower)"/>
+
+    <!-- Lookout cap -->
+    <rect x="212" y="128" width="88" height="26" rx="4" fill="#12172a"/>
+    <rect x="212" y="110" width="14" height="20" fill="#12172a"/>
+    <rect x="242" y="110" width="14" height="20" fill="#12172a"/>
+    <rect x="272" y="110" width="14" height="20" fill="#12172a"/>
+
+    <!-- Watch beacon: doubles as a camera-aperture motif -->
+    <circle cx="256" cy="238" r="34" fill="#0d1120"/>
+    <circle cx="256" cy="238" r="26" fill="#ffe6b0"/>
+    <circle cx="256" cy="238" r="26" fill="none" stroke="#12172a" stroke-width="5"/>
+    <g stroke="#12172a" stroke-width="4" opacity="0.85">
+      <line x1="256" y1="215" x2="256" y2="261"/>
+      <line x1="233" y1="238" x2="279" y2="238"/>
+      <line x1="240" y1="222" x2="272" y2="254"/>
+      <line x1="272" y1="222" x2="240" y2="254"/>
+    </g>
+    <circle cx="256" cy="238" r="9" fill="#0d1120"/>
+
+    <!-- Base plinth -->
+    <path d="M204 356 L310 356 L322 372 L192 372 Z" fill="#0d1120"/>
+  </g>
+</svg>

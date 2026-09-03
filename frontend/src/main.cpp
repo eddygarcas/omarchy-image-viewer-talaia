@@ -1,5 +1,6 @@
 #include <QCoreApplication>
 #include <QGuiApplication>
+#include <QIcon>
 #include <QQmlApplicationEngine>
 #include <QQmlContext>
 #include <QUrl>
@@ -10,8 +11,9 @@
 int main(int argc, char *argv[])
 {
     QGuiApplication app(argc, argv);
-    app.setApplicationName("Image Viewer");
-    app.setOrganizationName("image-viewer");
+    app.setApplicationName("Talaia");
+    app.setOrganizationName("talaia");
+    app.setWindowIcon(QIcon(QStringLiteral(":/resources/icons/talaia.svg")));
 
     ImageBackend backend;
 

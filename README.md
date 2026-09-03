@@ -1,7 +1,11 @@
-# Omarchy Image Viewer
+# Talaia
 
 A desktop image viewer with a **Zig** backend (vendored `stb_image` /
 `stb_image_write` / `stb_image_resize2`) and a **Qt6/QML** frontend.
+
+Named after the *talaia* — a coastal watchtower built to see the whole
+horizon — this is a viewer for looking at your images clearly, including
+in fullscreen slideshow.
 
 ![Screenshot](docs/screenshot.png)
 
@@ -46,10 +50,23 @@ then configures and builds `frontend/` with CMake/Ninja, producing:
 frontend/build/image-viewer
 ```
 
+## Installing
+
+```sh
+./install.sh
+```
+
+Builds the app, symlinks it as `talaia` into `~/.local/bin`, installs the
+app icon into `~/.local/share/icons/hicolor`, and registers a desktop entry
+in `~/.local/share/applications` so **Talaia** shows up in your app
+launcher. Requires `rsvg-convert` (`sudo pacman -S librsvg`) to rasterize
+the icon.
+
 ## Running
 
 ```sh
-./frontend/build/image-viewer [path/to/image]
+talaia [path/to/image]              # after ./install.sh
+./frontend/build/image-viewer [path/to/image]   # without installing
 ```
 
 Passing a path on the command line opens it immediately; otherwise use the
