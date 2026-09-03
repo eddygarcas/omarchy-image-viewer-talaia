@@ -28,6 +28,26 @@ ApplicationWindow {
         onAccepted: backend.saveImage(selectedFile)
     }
 
+    Dialog {
+        id: overwriteConfirmDialog
+        title: "Overwrite File"
+        modal: true
+        anchors.centerIn: Overlay.overlay
+        onAccepted: backend.saveImage(backend.currentPath)
+
+        Label {
+            width: 320
+            wrapMode: Text.WordWrap
+            text: "Save changes to “" + (backend.hasImage ? backend.currentPath.split("/").pop() : "")
+                  + "”? This overwrites the original file and can't be undone."
+        }
+
+        footer: DialogButtonBox {
+            RoundedButton { text: "Cancel"; DialogButtonBox.buttonRole: DialogButtonBox.RejectRole }
+            RoundedButton { text: "Overwrite"; DialogButtonBox.buttonRole: DialogButtonBox.AcceptRole }
+        }
+    }
+
     Connections {
         target: backend
         function onErrorOccurred(message) {
@@ -60,6 +80,7 @@ ApplicationWindow {
                 padding: 8
 
                 RoundedButton { text: "Open"; onClicked: openDialog.open() }
+                RoundedButton { text: "Save"; enabled: backend.hasImage; onClicked: overwriteConfirmDialog.open() }
                 RoundedButton { text: "Save As"; enabled: backend.hasImage; onClicked: saveDialog.open() }
                 Label {
                     anchors.verticalCenter: parent.verticalCenter
@@ -85,6 +106,7 @@ ApplicationWindow {
         EditToolbar {
             Layout.fillWidth: true
             visible: backend.hasImage
+            onCropRequested: imageView.startCrop()
         }
 
         Label {

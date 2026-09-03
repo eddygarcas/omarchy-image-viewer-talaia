@@ -46,6 +46,11 @@ public:
 
 signals:
     void imageChanged();
+    /// Fired only for discrete, committed edits (rotate/flip/crop/resize/
+    /// commitAdjust/undo/redo/reset/open) - NOT for live adjust() previews.
+    /// UI state that should reset on a committed edit (e.g. adjustment
+    /// sliders back to neutral) should listen to this, not imageChanged.
+    void committed();
     void errorOccurred(const QString &message);
 
 private:

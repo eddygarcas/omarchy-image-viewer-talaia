@@ -7,6 +7,8 @@ Item {
     Layout.fillWidth: true
     Layout.preferredHeight: toolRow.implicitHeight + 16
 
+    signal cropRequested()
+
     function resetSliders() {
         brightnessSlider.value = 0
         contrastSlider.value = 0
@@ -15,9 +17,9 @@ Item {
 
     Connections {
         target: backend
-        // Every committed op (geometric or Apply) resets adjustments to
-        // neutral on the backend side; keep the sliders in sync.
-        function onImageChanged() { root.resetSliders() }
+        // Only committed edits (not live adjust() previews) should snap the
+        // sliders back to neutral - see ImageBackend::committed doc comment.
+        function onCommitted() { root.resetSliders() }
     }
 
     ScrollView {
@@ -38,12 +40,12 @@ Item {
 
             ToolSeparator {}
 
-            RoundedToolButton { text: "Crop"; onClicked: cropDialog.open() }
+            RoundedToolButton { text: "Crop"; onClicked: root.cropRequested() }
             RoundedToolButton { text: "Resize"; onClicked: resizeDialog.open() }
 
             ToolSeparator {}
 
-            Label { anchors.verticalCenter: parent.verticalCenter; text: "B" }
+            Label { anchors.verticalCenter: parent.verticalCenter; text: "Brightness" }
             Slider {
                 id: brightnessSlider
                 anchors.verticalCenter: parent.verticalCenter
@@ -51,7 +53,7 @@ Item {
                 width: 90
                 onMoved: backend.adjust(value, contrastSlider.value, saturationSlider.value)
             }
-            Label { anchors.verticalCenter: parent.verticalCenter; text: "C" }
+            Label { anchors.verticalCenter: parent.verticalCenter; text: "Contrast" }
             Slider {
                 id: contrastSlider
                 anchors.verticalCenter: parent.verticalCenter
@@ -59,7 +61,7 @@ Item {
                 width: 90
                 onMoved: backend.adjust(brightnessSlider.value, value, saturationSlider.value)
             }
-            Label { anchors.verticalCenter: parent.verticalCenter; text: "S" }
+            Label { anchors.verticalCenter: parent.verticalCenter; text: "Saturation" }
             Slider {
                 id: saturationSlider
                 anchors.verticalCenter: parent.verticalCenter
@@ -78,53 +80,42 @@ Item {
     }
 
     Dialog {
-        id: cropDialog
-        title: "Crop"
-        modal: true
-        anchors.centerIn: Overlay.overlay
-        onAboutToShow: {
-            xSpin.value = 0
-            ySpin.value = 0
-            wSpin.value = backend.imageWidth
-            hSpin.value = backend.imageHeight
-        }
-        onAccepted: backend.crop(xSpin.value, ySpin.value, wSpin.value, hSpin.value)
-
-        GridLayout {
-            columns: 2
-            Label { text: "X" }
-            SpinBox { id: xSpin; from: 0; to: Math.max(0, backend.imageWidth - 1) }
-            Label { text: "Y" }
-            SpinBox { id: ySpin; from: 0; to: Math.max(0, backend.imageHeight - 1) }
-            Label { text: "Width" }
-            SpinBox { id: wSpin; from: 1; to: Math.max(1, backend.imageWidth) }
-            Label { text: "Height" }
-            SpinBox { id: hSpin; from: 1; to: Math.max(1, backend.imageHeight) }
-        }
-
-        footer: DialogButtonBox {
-            RoundedButton { text: "Cancel"; DialogButtonBox.buttonRole: DialogButtonBox.RejectRole }
-            RoundedButton { text: "OK"; DialogButtonBox.buttonRole: DialogButtonBox.AcceptRole }
-        }
-    }
-
-    Dialog {
         id: resizeDialog
         title: "Resize"
         modal: true
         anchors.centerIn: Overlay.overlay
+        property real aspect: 1
+
         onAboutToShow: {
             rwSpin.value = backend.imageWidth
             rhSpin.value = backend.imageHeight
+            aspect = backend.imageHeight > 0 ? backend.imageWidth / backend.imageHeight : 1
+            chainToggle.checked = true
         }
         onAccepted: backend.resizeImage(rwSpin.value, rhSpin.value)
 
         GridLayout {
-            columns: 2
+            columns: 3
+            rowSpacing: 8
+            columnSpacing: 8
+
             Label { text: "Width" }
-            SpinBox { id: rwSpin; from: 1; to: 20000 }
+            SpinBox {
+                id: rwSpin
+                from: 1; to: 20000
+                onValueModified: if (chainToggle.checked) rhSpin.value = Math.max(1, Math.round(value / resizeDialog.aspect))
+            }
+            ChainToggle {
+                id: chainToggle
+                Layout.rowSpan: 2
+                Layout.alignment: Qt.AlignVCenter
+            }
             Label { text: "Height" }
-            SpinBox { id: rhSpin; from: 1; to: 20000 }
+            SpinBox {
+                id: rhSpin
+                from: 1; to: 20000
+                onValueModified: if (chainToggle.checked) rwSpin.value = Math.max(1, Math.round(value * resizeDialog.aspect))
+            }
         }
 
         footer: DialogButtonBox {

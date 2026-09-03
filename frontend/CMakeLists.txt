@@ -37,6 +37,7 @@ qt_add_qml_module(image-viewer
         qml/SlideshowOverlay.qml
         qml/RoundedButton.qml
         qml/RoundedToolButton.qml
+        qml/ChainToggle.qml
 )
 
 qt_add_resources(image-viewer "icon"

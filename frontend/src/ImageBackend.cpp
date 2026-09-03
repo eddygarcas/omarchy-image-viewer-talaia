@@ -47,6 +47,7 @@ void ImageBackend::bump()
     refreshDimensions();
     ++m_generation;
     emit imageChanged();
+    emit committed();
 }
 
 QImage ImageBackend::currentQImage() const
@@ -122,7 +123,11 @@ void ImageBackend::adjust(qreal brightness, qreal contrast, qreal saturation)
     if (!m_handle)
         return;
     img_adjust(m_handle, static_cast<float>(brightness), static_cast<float>(contrast), static_cast<float>(saturation));
-    bump();
+    // Live preview only - dimensions can't change here, and this must NOT
+    // emit committed() or every slider tick would snap adjustment UI back
+    // to neutral (see ImageBackend::committed doc comment).
+    ++m_generation;
+    emit imageChanged();
 }
 
 void ImageBackend::commitAdjust()
