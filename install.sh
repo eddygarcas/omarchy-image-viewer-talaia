@@ -8,6 +8,20 @@ ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 BIN_PATH="$ROOT_DIR/frontend/build/image-viewer"
 ICON_SRC="$ROOT_DIR/frontend/resources/icons/talaia.svg"
 
+echo "==> Checking dependencies"
+missing=()
+command -v zig >/dev/null 2>&1 || missing+=(zig)
+command -v cmake >/dev/null 2>&1 || missing+=(cmake)
+command -v ninja >/dev/null 2>&1 || missing+=(ninja)
+command -v rsvg-convert >/dev/null 2>&1 || missing+=(librsvg)
+pkg-config --exists Qt6Core 2>/dev/null || missing+=(qt6-base)
+pkg-config --exists Qt6Qml 2>/dev/null || missing+=(qt6-declarative)
+
+if ((${#missing[@]})); then
+    echo "==> Installing missing packages: ${missing[*]}"
+    sudo pacman -S --needed --noconfirm "${missing[@]}"
+fi
+
 echo "==> Building"
 "$ROOT_DIR/build.sh"
 

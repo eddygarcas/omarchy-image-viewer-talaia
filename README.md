@@ -99,6 +99,9 @@ actually shared.
 
 ## Prerequisites
 
+On Arch/Omarchy, `./install.sh` checks for and installs missing dependencies
+via `pacman` automatically. To set them up manually (or on another distro):
+
 - [Zig](https://ziglang.org/) 0.16
 - Qt6 (`qt6-base`, `qt6-declarative` — on Arch/Omarchy: `sudo pacman -S qt6-base qt6-declarative`)
 - CMake and Ninja (`sudo pacman -S cmake ninja`)
@@ -123,11 +126,10 @@ frontend/build/image-viewer
 ./install.sh
 ```
 
-Builds the app, symlinks it as `talaia` into `~/.local/bin`, installs the
-app icon into `~/.local/share/icons/hicolor`, and registers a desktop entry
-in `~/.local/share/applications` so **Talaia** shows up in your app
-launcher. Requires `rsvg-convert` (`sudo pacman -S librsvg`) to rasterize
-the icon.
+Installs any missing dependencies (see Prerequisites) via `pacman`, builds
+the app, symlinks it as `talaia` into `~/.local/bin`, installs the app icon
+into `~/.local/share/icons/hicolor`, and registers a desktop entry in
+`~/.local/share/applications` so **Talaia** shows up in your app launcher.
 
 ## Running
 
