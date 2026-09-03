@@ -31,10 +31,10 @@ Item {
             spacing: 6
             padding: 8
 
-            RoundedToolButton { text: "⟲"; ToolTip.text: "Rotate left"; ToolTip.visible: hovered; onClicked: backend.rotate(false) }
-            RoundedToolButton { text: "⟳"; ToolTip.text: "Rotate right"; ToolTip.visible: hovered; onClicked: backend.rotate(true) }
-            RoundedToolButton { text: "⇋"; ToolTip.text: "Flip horizontal"; ToolTip.visible: hovered; onClicked: backend.flip(true) }
-            RoundedToolButton { text: "⇅"; ToolTip.text: "Flip vertical"; ToolTip.visible: hovered; onClicked: backend.flip(false) }
+            RoundedToolButton { icon.name: "object-rotate-left-symbolic"; ToolTip.text: "Rotate left"; ToolTip.visible: hovered; onClicked: backend.rotate(false) }
+            RoundedToolButton { icon.name: "object-rotate-right-symbolic"; ToolTip.text: "Rotate right"; ToolTip.visible: hovered; onClicked: backend.rotate(true) }
+            RoundedToolButton { icon.name: "object-flip-horizontal-symbolic"; ToolTip.text: "Flip horizontal"; ToolTip.visible: hovered; onClicked: backend.flip(true) }
+            RoundedToolButton { icon.name: "object-flip-vertical-symbolic"; ToolTip.text: "Flip vertical"; ToolTip.visible: hovered; onClicked: backend.flip(false) }
 
             ToolSeparator {}
 
@@ -71,8 +71,8 @@ Item {
 
             ToolSeparator {}
 
-            RoundedToolButton { text: "↶"; ToolTip.text: "Undo"; ToolTip.visible: hovered; onClicked: backend.undo() }
-            RoundedToolButton { text: "↷"; ToolTip.text: "Redo"; ToolTip.visible: hovered; onClicked: backend.redo() }
+            RoundedToolButton { icon.name: "edit-undo-symbolic"; ToolTip.text: "Undo"; ToolTip.visible: hovered; onClicked: backend.undo() }
+            RoundedToolButton { icon.name: "edit-redo-symbolic"; ToolTip.text: "Redo"; ToolTip.visible: hovered; onClicked: backend.redo() }
             RoundedToolButton { text: "Reset"; ToolTip.text: "Revert to the originally opened image"; ToolTip.visible: hovered; onClicked: backend.resetImage() }
         }
     }
