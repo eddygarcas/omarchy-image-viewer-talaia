@@ -3,6 +3,8 @@
 A desktop image viewer with a **Zig** backend (vendored `stb_image` /
 `stb_image_write` / `stb_image_resize2`) and a **Qt6/QML** frontend.
 
+![Screenshot](docs/screenshot.png)
+
 ## Features
 
 - Open any image `stb_image` supports: PNG, JPEG, BMP, GIF (static), TGA,
