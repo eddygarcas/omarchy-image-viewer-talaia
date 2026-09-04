@@ -122,6 +122,29 @@ frontend/build/image-viewer
 
 ## Installing
 
+### Arch / Omarchy (AUR)
+
+```sh
+yay -S talaia-git
+```
+
+This tracks `master` directly rather than tagged releases (there are no
+version tags yet), so `pkgver` bumps on every commit — a regular system
+update (`yay -Syu`, with devel-package checking enabled) picks up new
+commits the same way it picks up any other package update.
+
+*Not published yet — pending an AUR account, which is temporarily closed to
+new registrations. Until then, the exact same PKGBUILD builds and installs
+locally with no AUR account needed:*
+
+```sh
+git clone https://github.com/eddygarcas/omarchy-image-viewer-talaia.git
+cd omarchy-image-viewer-talaia/packaging
+makepkg -si
+```
+
+### Manually (any distro)
+
 ```sh
 ./install.sh
 ```
