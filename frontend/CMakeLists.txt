@@ -17,6 +17,12 @@ find_package(Qt6 REQUIRED COMPONENTS Core Gui Quick)
 
 qt_standard_project_setup(REQUIRES 6.5)
 
+# `pragma Singleton` alone isn't reliably picked up by qt_add_qml_module's
+# automatic qmldir generation; without this, Theme.qml gets registered as a
+# plain type, and every `Theme.foo` reference elsewhere silently evaluates to
+# undefined (no build or runtime warning) instead of erroring.
+set_source_files_properties(qml/Theme.qml PROPERTIES QT_QML_SINGLETON_TYPE TRUE)
+
 qt_add_executable(image-viewer
     src/main.cpp
     src/ImageBackend.cpp
@@ -25,6 +31,8 @@ qt_add_executable(image-viewer
     src/ImageProvider.h
     src/FolderModel.cpp
     src/FolderModel.h
+    src/ThemeReader.cpp
+    src/ThemeReader.h
 )
 
 qt_add_qml_module(image-viewer
@@ -38,6 +46,9 @@ qt_add_qml_module(image-viewer
         qml/RoundedButton.qml
         qml/RoundedToolButton.qml
         qml/ChainToggle.qml
+        qml/Theme.qml
+        qml/Glyph.qml
+        qml/Icons.js
 )
 
 qt_add_resources(image-viewer "icon"

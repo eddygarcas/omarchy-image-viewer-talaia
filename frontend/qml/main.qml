@@ -2,6 +2,7 @@ import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
 import QtQuick.Dialogs
+import ImageViewer
 
 ApplicationWindow {
     id: window
@@ -11,7 +12,7 @@ ApplicationWindow {
     minimumHeight: 360
     visible: true
     title: backend.hasImage ? (backend.currentPath.split("/").pop() + " — Talaia") : "Talaia"
-    color: "#1e1e1e"
+    color: Theme.background
 
     FileDialog {
         id: openDialog
@@ -79,18 +80,19 @@ ApplicationWindow {
                 spacing: 8
                 padding: 8
 
-                RoundedButton { text: "Open"; onClicked: openDialog.open() }
-                RoundedButton { text: "Save"; enabled: backend.hasImage; onClicked: overwriteConfirmDialog.open() }
-                RoundedButton { text: "Save As"; enabled: backend.hasImage; onClicked: saveDialog.open() }
+                RoundedButton { text: "Open"; glyph: "folder-open"; onClicked: openDialog.open() }
+                RoundedButton { text: "Save"; glyph: "save"; enabled: backend.hasImage; onClicked: overwriteConfirmDialog.open() }
+                RoundedButton { text: "Save As"; glyph: "save"; enabled: backend.hasImage; onClicked: saveDialog.open() }
                 Label {
                     anchors.verticalCenter: parent.verticalCenter
                     leftPadding: 24
                     rightPadding: 24
                     text: backend.hasImage ? (backend.imageWidth + " × " + backend.imageHeight) : ""
-                    color: "#bbbbbb"
+                    color: Theme.muted
                 }
                 RoundedButton {
                     text: "Slideshow"
+                    glyph: "play"
                     enabled: backend.hasImage && backend.folderModel.count > 1
                     onClicked: slideshowLoader.active = true
                 }
@@ -113,7 +115,7 @@ ApplicationWindow {
             id: errorLabel
             Layout.fillWidth: true
             Layout.margins: 4
-            color: "#ff8080"
+            color: Theme.error
             horizontalAlignment: Text.AlignHCenter
         }
     }

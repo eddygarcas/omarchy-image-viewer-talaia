@@ -7,6 +7,7 @@
 
 #include "ImageBackend.h"
 #include "ImageProvider.h"
+#include "ThemeReader.h"
 
 int main(int argc, char *argv[])
 {
@@ -16,10 +17,12 @@ int main(int argc, char *argv[])
     app.setWindowIcon(QIcon(QStringLiteral(":/resources/icons/talaia.svg")));
 
     ImageBackend backend;
+    ThemeReader themeReader;
 
     QQmlApplicationEngine engine;
     engine.addImageProvider(QStringLiteral("backend"), new ImageProvider(&backend));
     engine.rootContext()->setContextProperty("backend", &backend);
+    engine.rootContext()->setContextProperty("themeReader", &themeReader);
 
     QObject::connect(
         &engine, &QQmlApplicationEngine::objectCreationFailed, &app,

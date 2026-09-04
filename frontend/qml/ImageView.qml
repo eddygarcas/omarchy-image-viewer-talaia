@@ -1,5 +1,6 @@
 import QtQuick
 import QtQuick.Controls
+import ImageViewer
 
 Item {
     id: root
@@ -49,7 +50,7 @@ Item {
 
     Rectangle {
         anchors.fill: parent
-        color: "#2b2b2b"
+        color: Theme.canvas
     }
 
     Item {
@@ -182,8 +183,8 @@ Item {
         Rectangle {
             id: selection
             visible: false
-            color: "#3391c4ff"
-            border.color: "#ffffff"
+            color: Qt.rgba(Theme.accent.r, Theme.accent.g, Theme.accent.b, 0.2)
+            border.color: Theme.foreground
             border.width: 1
         }
     }
@@ -196,7 +197,7 @@ Item {
         text: viewport.zoomScale > viewport.minZoom + 0.001
               ? Math.round(viewport.zoomScale * 100) + "%"
               : "Ctrl+Scroll to zoom"
-        color: "#999999"
+        color: Theme.muted
         font.pixelSize: 12
     }
 
@@ -204,7 +205,7 @@ Item {
         anchors.centerIn: parent
         text: "Open an image to get started"
         visible: !backend.hasImage
-        color: "#888888"
+        color: Theme.muted
         font.pixelSize: 18
     }
 
@@ -214,7 +215,7 @@ Item {
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.topMargin: 8
         text: "Drag to select the crop area"
-        color: "#dddddd"
+        color: Theme.foreground
         font.pixelSize: 13
     }
 

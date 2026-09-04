@@ -33,15 +33,15 @@ Item {
             spacing: 6
             padding: 8
 
-            RoundedToolButton { icon.name: "object-rotate-left-symbolic"; ToolTip.text: "Rotate left"; ToolTip.visible: hovered; onClicked: backend.rotate(false) }
-            RoundedToolButton { icon.name: "object-rotate-right-symbolic"; ToolTip.text: "Rotate right"; ToolTip.visible: hovered; onClicked: backend.rotate(true) }
-            RoundedToolButton { icon.name: "object-flip-horizontal-symbolic"; ToolTip.text: "Flip horizontal"; ToolTip.visible: hovered; onClicked: backend.flip(true) }
-            RoundedToolButton { icon.name: "object-flip-vertical-symbolic"; ToolTip.text: "Flip vertical"; ToolTip.visible: hovered; onClicked: backend.flip(false) }
+            RoundedToolButton { glyph: "rotate-left"; ToolTip.text: "Rotate left"; ToolTip.visible: hovered; onClicked: backend.rotate(false) }
+            RoundedToolButton { glyph: "rotate-right"; ToolTip.text: "Rotate right"; ToolTip.visible: hovered; onClicked: backend.rotate(true) }
+            RoundedToolButton { glyph: "flip-horizontal"; ToolTip.text: "Flip horizontal"; ToolTip.visible: hovered; onClicked: backend.flip(true) }
+            RoundedToolButton { glyph: "flip-vertical"; ToolTip.text: "Flip vertical"; ToolTip.visible: hovered; onClicked: backend.flip(false) }
 
             ToolSeparator {}
 
-            RoundedToolButton { text: "Crop"; onClicked: root.cropRequested() }
-            RoundedToolButton { text: "Resize"; onClicked: resizeDialog.open() }
+            RoundedToolButton { text: "Crop"; glyph: "crop"; onClicked: root.cropRequested() }
+            RoundedToolButton { text: "Resize"; glyph: "scaling"; onClicked: resizeDialog.open() }
 
             ToolSeparator {}
 
@@ -69,12 +69,12 @@ Item {
                 width: 90
                 onMoved: backend.adjust(brightnessSlider.value, contrastSlider.value, value)
             }
-            RoundedToolButton { text: "Apply"; ToolTip.text: "Bake in the color adjustment"; ToolTip.visible: hovered; onClicked: backend.commitAdjust() }
+            RoundedToolButton { text: "Apply"; glyph: "check"; ToolTip.text: "Bake in the color adjustment"; ToolTip.visible: hovered; onClicked: backend.commitAdjust() }
 
             ToolSeparator {}
 
-            RoundedToolButton { icon.name: "edit-undo-symbolic"; ToolTip.text: "Undo"; ToolTip.visible: hovered; onClicked: backend.undo() }
-            RoundedToolButton { icon.name: "edit-redo-symbolic"; ToolTip.text: "Redo"; ToolTip.visible: hovered; onClicked: backend.redo() }
+            RoundedToolButton { glyph: "undo"; ToolTip.text: "Undo"; ToolTip.visible: hovered; onClicked: backend.undo() }
+            RoundedToolButton { glyph: "redo"; ToolTip.text: "Redo"; ToolTip.visible: hovered; onClicked: backend.redo() }
             RoundedToolButton { text: "Reset"; ToolTip.text: "Revert to the originally opened image"; ToolTip.visible: hovered; onClicked: backend.resetImage() }
         }
     }

@@ -1,6 +1,7 @@
 import QtQuick
 import QtQuick.Controls
 import QtQuick.Window
+import ImageViewer
 
 Item {
     id: root
@@ -71,19 +72,19 @@ Item {
             spacing: 10
 
             RoundedToolButton {
-                icon.name: "media-seek-backward-symbolic"
+                glyph: "skip-back"
                 ToolTip.text: "Previous"
                 ToolTip.visible: hovered
                 onClicked: backend.openImage(backend.folderModel.previous())
             }
             RoundedToolButton {
-                icon.name: root.playing ? "media-playback-pause-symbolic" : "media-playback-start-symbolic"
+                glyph: root.playing ? "pause" : "play"
                 ToolTip.text: root.playing ? "Pause" : "Play"
                 ToolTip.visible: hovered
                 onClicked: root.playing = !root.playing
             }
             RoundedToolButton {
-                icon.name: "media-seek-forward-symbolic"
+                glyph: "skip-forward"
                 ToolTip.text: "Next"
                 ToolTip.visible: hovered
                 onClicked: backend.openImage(backend.folderModel.next())
@@ -94,7 +95,7 @@ Item {
             Label {
                 anchors.verticalCenter: parent.verticalCenter
                 text: "Interval"
-                color: "#dddddd"
+                color: Theme.foreground
             }
             Slider {
                 id: intervalSlider
@@ -109,19 +110,19 @@ Item {
             Label {
                 anchors.verticalCenter: parent.verticalCenter
                 text: Math.round(intervalSlider.value) + "s"
-                color: "#dddddd"
+                color: Theme.foreground
             }
 
             ToolSeparator {}
 
             RoundedButton {
                 text: root.expanded ? "Exit Fullscreen" : "Fullscreen"
-                icon.name: root.expanded ? "view-restore-symbolic" : "view-fullscreen-symbolic"
+                glyph: root.expanded ? "collapse" : "expand"
                 onClicked: root.toggleFullscreen()
             }
             RoundedButton {
                 text: "Close"
-                icon.name: "window-close-symbolic"
+                glyph: "close"
                 onClicked: root.requestClose()
             }
         }
