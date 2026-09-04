@@ -1,0 +1,12 @@
+[Desktop Entry]
+Type=Application
+Name=Talaia
+GenericName=Image Viewer
+Comment=View and edit images — crop, resize, adjust, and slideshow a whole folder in fullscreen
+Exec=talaia %f
+Icon=talaia
+Terminal=false
+StartupWMClass=image-viewer
+Categories=Graphics;Viewer;Photography;
+MimeType=image/png;image/jpeg;image/bmp;image/x-tga;image/x-portable-pixmap;image/x-portable-graymap;image/x-portable-anymap;
+Keywords=image;photo;viewer;editor;slideshow;crop;resize;

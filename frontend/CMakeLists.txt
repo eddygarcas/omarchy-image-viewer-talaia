@@ -17,6 +17,8 @@ find_package(Qt6 REQUIRED COMPONENTS Core Gui Quick)
 
 qt_standard_project_setup(REQUIRES 6.5)
 
+include(GNUInstallDirs)
+
 # `pragma Singleton` alone isn't reliably picked up by qt_add_qml_module's
 # automatic qmldir generation; without this, Theme.qml gets registered as a
 # plain type, and every `Theme.foo` reference elsewhere silently evaluates to
@@ -61,5 +63,21 @@ target_link_libraries(image-viewer PRIVATE Qt6::Core Qt6::Gui Qt6::Quick ${BACKE
 
 set_target_properties(image-viewer PROPERTIES
     BUILD_RPATH ${BACKEND_DIR}/zig-out/lib
-    INSTALL_RPATH ${BACKEND_DIR}/zig-out/lib
+    # $ORIGIN keeps this relative to wherever the binary ends up installed,
+    # rather than the dev tree's absolute zig-out path baked in above.
+    INSTALL_RPATH "$ORIGIN/../${CMAKE_INSTALL_LIBDIR}/talaia"
+)
+
+# Installed as image-viewer, not talaia: install(TARGETS) is what actually
+# rewrites BUILD_RPATH to INSTALL_RPATH on the installed copy, and only
+# install(TARGETS) does that - install(PROGRAMS RENAME) would just copy the
+# binary with its dev-tree RPATH baked in. Packaging provides the `talaia`
+# command name as a symlink to this instead (see packaging/PKGBUILD).
+install(TARGETS image-viewer RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR})
+install(FILES ${BACKEND_LIB} DESTINATION ${CMAKE_INSTALL_LIBDIR}/talaia)
+install(FILES ${CMAKE_SOURCE_DIR}/../packaging/talaia.desktop
+    DESTINATION ${CMAKE_INSTALL_DATADIR}/applications
+)
+install(FILES resources/icons/talaia.svg
+    DESTINATION ${CMAKE_INSTALL_DATADIR}/icons/hicolor/scalable/apps
 )

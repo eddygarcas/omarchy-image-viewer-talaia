@@ -1,0 +1,49 @@
+# Maintainer: Eduard Garcia <eduard@rzilient.club>
+
+pkgname=talaia-git
+pkgver=r1.0000000
+pkgrel=1
+pkgdesc='Desktop image viewer with a Zig backend and Qt6/QML frontend, themed from the live Omarchy palette'
+arch=('x86_64')
+url='https://github.com/eddygarcas/omarchy-image-viewer-talaia'
+license=('MIT')
+depends=('qt6-base' 'qt6-declarative' 'qt6-svg')
+makedepends=('git' 'zig' 'cmake' 'ninja')
+provides=('talaia')
+conflicts=('talaia')
+source=("$pkgname::git+$url.git#branch=master")
+sha256sums=('SKIP')
+
+pkgver() {
+  cd "$srcdir/$pkgname"
+  # No tags in this repo yet - the standard commit-count.hash scheme for an
+  # untagged VCS package, so every push produces a strictly increasing pkgver.
+  printf "r%s.%s" "$(git rev-list --count HEAD)" "$(git rev-parse --short HEAD)"
+}
+
+build() {
+  cd "$srcdir/$pkgname"
+
+  cd backend
+  zig build -Doptimize=ReleaseFast
+  cd ..
+
+  cmake -S frontend -B frontend/build -G Ninja \
+    -DCMAKE_BUILD_TYPE=Release \
+    -DCMAKE_INSTALL_PREFIX=/usr
+  cmake --build frontend/build
+}
+
+check() {
+  cd "$srcdir/$pkgname/backend"
+  zig build test
+}
+
+package() {
+  cd "$srcdir/$pkgname"
+  DESTDIR="$pkgdir" cmake --install frontend/build
+  # CMake installs the binary under its own target name (see frontend/CMakeLists.txt
+  # for why); this is the `talaia` command the desktop entry and users expect.
+  ln -s image-viewer "$pkgdir/usr/bin/talaia"
+  install -Dm644 LICENSE -t "$pkgdir/usr/share/licenses/$pkgname"
+}
