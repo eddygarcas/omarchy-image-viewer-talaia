@@ -7,6 +7,7 @@ RoundedToolButton {
     checkable: true
     checked: true
     glyph: checked ? "link" : "unlink"
-    ToolTip.text: checked ? "Width and height are linked" : "Width and height are independent"
+    Accessible.name: checked ? qsTr("Keep aspect ratio") : qsTr("Change width and height independently")
+    ToolTip.text: checked ? qsTr("Width and height are linked") : qsTr("Width and height are independent")
     ToolTip.visible: hovered
 }

@@ -14,7 +14,7 @@ QtObject {
     readonly property color fallbackSurface: "#2a303c"
     readonly property color fallbackSurfaceHover: "#343b48"
     readonly property color fallbackSurfaceActive: "#3a4150"
-    readonly property color fallbackBorder: "#4a5261"
+    readonly property color fallbackBorder: "#747e8e"
     readonly property color fallbackForeground: "#eeeeee"
     readonly property color fallbackMuted: "#bbbbbb"
     readonly property color fallbackAccent: "#7fb2ff"
@@ -34,8 +34,12 @@ QtObject {
     property color error: fallbackError
 
     readonly property int cornerRadius: 8
-    readonly property int iconSize: 16
+    readonly property int iconSize: 18
     readonly property real strokeWidth: 1.5
+    readonly property int controlHeight: 40
+    readonly property int bodyPointSize: 12
+    readonly property int titlePointSize: 15
+    readonly property int captionPointSize: 10
 
     function parseToml(text) {
         var out = {}
@@ -92,7 +96,7 @@ QtObject {
         root.surface = surf
         root.surfaceHover = root.mix(surf, fg, 0.12)
         root.surfaceActive = root.mix(surf, fg, 0.2)
-        root.border = root.mix(surf, fg, 0.28)
+        root.border = root.mix(surf, fg, 0.45)
         root.canvas = root.mix(bg, fg, 0.05)
     }
 

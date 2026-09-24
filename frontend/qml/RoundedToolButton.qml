@@ -1,5 +1,5 @@
 import QtQuick
-import QtQuick.Controls
+import QtQuick.Controls.Basic
 import ImageViewer
 
 ToolButton {
@@ -7,15 +7,20 @@ ToolButton {
 
     // Name of a Glyph icon (see Icons.js) to show instead of/alongside text; "" for none.
     property string glyph: ""
+    activeFocusOnTab: true
+    implicitWidth: Math.max(Theme.controlHeight, contentItem.implicitWidth + leftPadding + rightPadding)
+    implicitHeight: Theme.controlHeight
+    leftPadding: 10
+    rightPadding: 10
+    font.pointSize: Theme.bodyPointSize
 
     background: Rectangle {
-        implicitWidth: 34
-        implicitHeight: 34
         radius: Theme.cornerRadius
         color: control.down ? Theme.surfaceActive
              : (control.hovered || control.checked) ? Theme.surfaceHover : "transparent"
-        border.color: (control.hovered || control.down || control.checked) ? Theme.border : "transparent"
-        border.width: 1
+        border.color: control.activeFocus ? Theme.accent
+            : (control.hovered || control.down || control.checked) ? Theme.border : "transparent"
+        border.width: control.activeFocus ? 2 : 1
         opacity: control.enabled ? 1.0 : 0.5
     }
 

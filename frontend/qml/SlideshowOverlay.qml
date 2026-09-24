@@ -1,6 +1,5 @@
 import QtQuick
 import QtQuick.Controls
-import QtQuick.Window
 import ImageViewer
 
 Item {
@@ -42,6 +41,7 @@ Item {
         smooth: true
         cache: false
         asynchronous: true
+        sourceSize: Qt.size(backend.imageWidth, backend.imageHeight)
         source: backend.hasImage ? ("image://backend/current/" + backend.generation) : ""
     }
 
@@ -50,11 +50,6 @@ Item {
         running: root.playing
         repeat: true
         onTriggered: backend.openImage(backend.folderModel.next())
-    }
-
-    MouseArea {
-        anchors.fill: parent
-        onClicked: controlsScroll.visible = !controlsScroll.visible
     }
 
     ScrollView {
@@ -73,19 +68,22 @@ Item {
 
             RoundedToolButton {
                 glyph: "skip-back"
-                ToolTip.text: "Previous"
+                Accessible.name: qsTr("Previous image")
+                ToolTip.text: qsTr("Previous image")
                 ToolTip.visible: hovered
                 onClicked: backend.openImage(backend.folderModel.previous())
             }
             RoundedToolButton {
                 glyph: root.playing ? "pause" : "play"
-                ToolTip.text: root.playing ? "Pause" : "Play"
+                Accessible.name: root.playing ? qsTr("Pause slideshow") : qsTr("Play slideshow")
+                ToolTip.text: Accessible.name
                 ToolTip.visible: hovered
                 onClicked: root.playing = !root.playing
             }
             RoundedToolButton {
                 glyph: "skip-forward"
-                ToolTip.text: "Next"
+                Accessible.name: qsTr("Next image")
+                ToolTip.text: qsTr("Next image")
                 ToolTip.visible: hovered
                 onClicked: backend.openImage(backend.folderModel.next())
             }
@@ -94,7 +92,7 @@ Item {
 
             Label {
                 anchors.verticalCenter: parent.verticalCenter
-                text: "Interval"
+                text: qsTr("Interval")
                 color: Theme.foreground
             }
             Slider {
@@ -105,23 +103,24 @@ Item {
                 stepSize: 1
                 value: root.intervalMs / 1000
                 width: 110
+                Accessible.name: qsTr("Slideshow interval in seconds")
                 onMoved: root.intervalMs = value * 1000
             }
             Label {
                 anchors.verticalCenter: parent.verticalCenter
-                text: Math.round(intervalSlider.value) + "s"
+                text: qsTr("%1 s").arg(Math.round(intervalSlider.value))
                 color: Theme.foreground
             }
 
             ToolSeparator {}
 
             RoundedButton {
-                text: root.expanded ? "Exit Fullscreen" : "Fullscreen"
+                text: root.expanded ? qsTr("Exit fullscreen") : qsTr("Fullscreen")
                 glyph: root.expanded ? "collapse" : "expand"
                 onClicked: root.toggleFullscreen()
             }
             RoundedButton {
-                text: "Close"
+                text: qsTr("Close")
                 glyph: "close"
                 onClicked: root.requestClose()
             }

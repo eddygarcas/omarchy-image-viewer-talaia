@@ -1,3 +1,7 @@
 backend/zig-out/
 backend/.zig-cache/
 frontend/build/
+packaging/pkg/
+packaging/src/
+packaging/talaia-git/
+packaging/*.pkg.tar.*

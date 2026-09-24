@@ -1,126 +1,113 @@
 import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
+import ImageViewer
 
-Item {
+Rectangle {
     id: root
-    Layout.fillWidth: true
-    Layout.preferredHeight: toolRow.implicitHeight + 16
+    implicitHeight: 64
+    color: Theme.background
+    border.color: Theme.border
+    border.width: 1
 
     signal cropRequested()
 
-    function resetSliders() {
-        brightnessSlider.value = 0
-        contrastSlider.value = 0
-        saturationSlider.value = 1.0
-    }
-
-    Connections {
-        target: backend
-        // Only committed edits (not live adjust() previews) should snap the
-        // sliders back to neutral - see ImageBackend::committed doc comment.
-        function onCommitted() { root.resetSliders() }
-    }
-
-    ScrollView {
+    RowLayout {
         anchors.fill: parent
-        clip: true
-        ScrollBar.vertical.policy: ScrollBar.AlwaysOff
-        contentWidth: toolRow.implicitWidth
+        anchors.leftMargin: 8
+        anchors.rightMargin: 8
+        spacing: 4
 
-        Row {
-            id: toolRow
-            spacing: 6
-            padding: 8
+        Label {
+            text: qsTr("Edit")
+            visible: root.width >= 700
+            color: Theme.muted
+            font.pointSize: Theme.captionPointSize
+            font.weight: Font.Medium
+            Layout.rightMargin: 8
+        }
+        RoundedToolButton {
+            glyph: "rotate-left"
+            Accessible.name: qsTr("Rotate left")
+            ToolTip.text: qsTr("Rotate left")
+            ToolTip.visible: hovered
+            onClicked: backend.rotate(false)
+        }
+        RoundedToolButton {
+            glyph: "rotate-right"
+            Accessible.name: qsTr("Rotate right")
+            ToolTip.text: qsTr("Rotate right")
+            ToolTip.visible: hovered
+            onClicked: backend.rotate(true)
+        }
+        RoundedToolButton {
+            glyph: "flip-horizontal"
+            Accessible.name: qsTr("Flip horizontal")
+            ToolTip.text: qsTr("Flip horizontal")
+            ToolTip.visible: hovered
+            onClicked: backend.flip(true)
+        }
+        RoundedToolButton {
+            glyph: "flip-vertical"
+            Accessible.name: qsTr("Flip vertical")
+            ToolTip.text: qsTr("Flip vertical")
+            ToolTip.visible: hovered
+            onClicked: backend.flip(false)
+        }
 
-            RoundedToolButton { glyph: "rotate-left"; ToolTip.text: "Rotate left"; ToolTip.visible: hovered; onClicked: backend.rotate(false) }
-            RoundedToolButton { glyph: "rotate-right"; ToolTip.text: "Rotate right"; ToolTip.visible: hovered; onClicked: backend.rotate(true) }
-            RoundedToolButton { glyph: "flip-horizontal"; ToolTip.text: "Flip horizontal"; ToolTip.visible: hovered; onClicked: backend.flip(true) }
-            RoundedToolButton { glyph: "flip-vertical"; ToolTip.text: "Flip vertical"; ToolTip.visible: hovered; onClicked: backend.flip(false) }
+        Rectangle { Layout.preferredWidth: 1; Layout.preferredHeight: 24; color: Theme.border; Layout.leftMargin: 6; Layout.rightMargin: 6 }
 
-            ToolSeparator {}
+        RoundedToolButton {
+            text: root.width < 800 ? "" : qsTr("Crop")
+            glyph: "crop"
+            Accessible.name: qsTr("Crop image")
+            ToolTip.text: qsTr("Crop image")
+            ToolTip.visible: hovered && text === ""
+            onClicked: root.cropRequested()
+        }
+        RoundedToolButton {
+            text: root.width < 800 ? "" : qsTr("Resize")
+            glyph: "scaling"
+            Accessible.name: qsTr("Resize image")
+            ToolTip.text: qsTr("Resize image")
+            ToolTip.visible: hovered && text === ""
+            onClicked: resizeDialog.open()
+        }
+        RoundedToolButton {
+            text: root.width < 950 ? "" : qsTr("Adjust")
+            glyph: "adjust"
+            Accessible.name: qsTr("Adjust color")
+            ToolTip.text: qsTr("Adjust color")
+            ToolTip.visible: hovered && text === ""
+            onClicked: adjustDialog.open()
+        }
 
-            RoundedToolButton { text: "Crop"; glyph: "crop"; onClicked: root.cropRequested() }
-            RoundedToolButton { text: "Resize"; glyph: "scaling"; onClicked: resizeDialog.open() }
+        Item { Layout.fillWidth: true }
 
-            ToolSeparator {}
-
-            Label { anchors.verticalCenter: parent.verticalCenter; text: "Brightness" }
-            Slider {
-                id: brightnessSlider
-                anchors.verticalCenter: parent.verticalCenter
-                from: -100; to: 100; value: 0
-                width: 90
-                onMoved: backend.adjust(value, contrastSlider.value, saturationSlider.value)
-            }
-            Label { anchors.verticalCenter: parent.verticalCenter; text: "Contrast" }
-            Slider {
-                id: contrastSlider
-                anchors.verticalCenter: parent.verticalCenter
-                from: -100; to: 100; value: 0
-                width: 90
-                onMoved: backend.adjust(brightnessSlider.value, value, saturationSlider.value)
-            }
-            Label { anchors.verticalCenter: parent.verticalCenter; text: "Saturation" }
-            Slider {
-                id: saturationSlider
-                anchors.verticalCenter: parent.verticalCenter
-                from: 0; to: 2; value: 1
-                width: 90
-                onMoved: backend.adjust(brightnessSlider.value, contrastSlider.value, value)
-            }
-            RoundedToolButton { text: "Apply"; glyph: "check"; ToolTip.text: "Bake in the color adjustment"; ToolTip.visible: hovered; onClicked: backend.commitAdjust() }
-
-            ToolSeparator {}
-
-            RoundedToolButton { glyph: "undo"; ToolTip.text: "Undo"; ToolTip.visible: hovered; onClicked: backend.undo() }
-            RoundedToolButton { glyph: "redo"; ToolTip.text: "Redo"; ToolTip.visible: hovered; onClicked: backend.redo() }
-            RoundedToolButton { text: "Reset"; ToolTip.text: "Revert to the originally opened image"; ToolTip.visible: hovered; onClicked: backend.resetImage() }
+        RoundedToolButton {
+            glyph: "undo"
+            Accessible.name: qsTr("Undo")
+            ToolTip.text: qsTr("Undo")
+            ToolTip.visible: hovered
+            onClicked: backend.undo()
+        }
+        RoundedToolButton {
+            glyph: "redo"
+            Accessible.name: qsTr("Redo")
+            ToolTip.text: qsTr("Redo")
+            ToolTip.visible: hovered
+            onClicked: backend.redo()
+        }
+        RoundedToolButton {
+            text: root.width < 720 ? "" : qsTr("Reset")
+            glyph: "reset"
+            Accessible.name: qsTr("Reset image")
+            ToolTip.text: qsTr("Reset image")
+            ToolTip.visible: hovered && text === ""
+            onClicked: backend.resetImage()
         }
     }
 
-    Dialog {
-        id: resizeDialog
-        title: "Resize"
-        modal: true
-        anchors.centerIn: Overlay.overlay
-        property real aspect: 1
-
-        onAboutToShow: {
-            rwSpin.value = backend.imageWidth
-            rhSpin.value = backend.imageHeight
-            aspect = backend.imageHeight > 0 ? backend.imageWidth / backend.imageHeight : 1
-            chainToggle.checked = true
-        }
-        onAccepted: backend.resizeImage(rwSpin.value, rhSpin.value)
-
-        GridLayout {
-            columns: 3
-            rowSpacing: 8
-            columnSpacing: 8
-
-            Label { text: "Width" }
-            SpinBox {
-                id: rwSpin
-                from: 1; to: 20000
-                onValueModified: if (chainToggle.checked) rhSpin.value = Math.max(1, Math.round(value / resizeDialog.aspect))
-            }
-            ChainToggle {
-                id: chainToggle
-                Layout.rowSpan: 2
-                Layout.alignment: Qt.AlignVCenter
-            }
-            Label { text: "Height" }
-            SpinBox {
-                id: rhSpin
-                from: 1; to: 20000
-                onValueModified: if (chainToggle.checked) rwSpin.value = Math.max(1, Math.round(value * resizeDialog.aspect))
-            }
-        }
-
-        footer: DialogButtonBox {
-            RoundedButton { text: "Cancel"; DialogButtonBox.buttonRole: DialogButtonBox.RejectRole }
-            RoundedButton { text: "OK"; DialogButtonBox.buttonRole: DialogButtonBox.AcceptRole }
-        }
-    }
+    ResizeDialog { id: resizeDialog }
+    AdjustDialog { id: adjustDialog }
 }

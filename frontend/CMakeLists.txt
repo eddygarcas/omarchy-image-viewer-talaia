@@ -42,8 +42,14 @@ qt_add_qml_module(image-viewer
     VERSION 1.0
     QML_FILES
         qml/main.qml
+        qml/FileActions.qml
+        qml/OverwriteDialog.qml
+        qml/ViewerHeader.qml
+        qml/ViewerStatusBar.qml
         qml/ImageView.qml
         qml/EditToolbar.qml
+        qml/AdjustDialog.qml
+        qml/ResizeDialog.qml
         qml/SlideshowOverlay.qml
         qml/RoundedButton.qml
         qml/RoundedToolButton.qml

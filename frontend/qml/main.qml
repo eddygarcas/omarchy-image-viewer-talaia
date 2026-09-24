@@ -1,7 +1,6 @@
 import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
-import QtQuick.Dialogs
 import ImageViewer
 
 ApplicationWindow {
@@ -11,112 +10,59 @@ ApplicationWindow {
     minimumWidth: 480
     minimumHeight: 360
     visible: true
-    title: backend.hasImage ? (backend.currentPath.split("/").pop() + " — Talaia") : "Talaia"
+    title: backend.hasImage ? qsTr("%1 — Talaia").arg(backend.currentPath.split("/").pop()) : qsTr("Talaia")
     color: Theme.background
 
-    FileDialog {
-        id: openDialog
-        title: "Open Image"
-        nameFilters: ["Images (*.png *.jpg *.jpeg *.bmp *.tga *.gif *.psd *.hdr *.pic *.pnm *.ppm *.pgm)", "All files (*)"]
-        onAccepted: backend.openImage(selectedFile)
-    }
-
-    FileDialog {
-        id: saveDialog
-        title: "Save Image As"
-        fileMode: FileDialog.SaveFile
-        nameFilters: ["PNG (*.png)", "JPEG (*.jpg *.jpeg)", "BMP (*.bmp)", "TGA (*.tga)"]
-        onAccepted: backend.saveImage(selectedFile)
-    }
-
-    Dialog {
-        id: overwriteConfirmDialog
-        title: "Overwrite File"
-        modal: true
-        anchors.centerIn: Overlay.overlay
-        onAccepted: backend.saveImage(backend.currentPath)
-
-        Label {
-            width: 320
-            wrapMode: Text.WordWrap
-            text: "Save changes to “" + (backend.hasImage ? backend.currentPath.split("/").pop() : "")
-                  + "”? This overwrites the original file and can't be undone."
-        }
-
-        footer: DialogButtonBox {
-            RoundedButton { text: "Cancel"; DialogButtonBox.buttonRole: DialogButtonBox.RejectRole }
-            RoundedButton { text: "Overwrite"; DialogButtonBox.buttonRole: DialogButtonBox.AcceptRole }
-        }
-    }
+    FileActions { id: fileActions }
 
     Connections {
         target: backend
         function onErrorOccurred(message) {
-            errorLabel.text = message
+            statusBar.errorMessage = message
             errorTimer.restart()
         }
     }
-
     Timer {
         id: errorTimer
-        interval: 4000
-        onTriggered: errorLabel.text = ""
+        interval: 5000
+        onTriggered: statusBar.errorMessage = ""
     }
+
+    Shortcut { sequence: StandardKey.Open; onActivated: fileActions.openImage() }
+    Shortcut { sequence: StandardKey.Save; enabled: backend.hasImage; onActivated: fileActions.saveImage() }
+    Shortcut { sequence: "Ctrl+Shift+S"; enabled: backend.hasImage; onActivated: fileActions.saveImageAs() }
+    Shortcut { sequence: StandardKey.Undo; enabled: backend.hasImage; onActivated: backend.undo() }
+    Shortcut { sequence: StandardKey.Redo; enabled: backend.hasImage; onActivated: backend.redo() }
+    Shortcut { sequence: "Ctrl+0"; enabled: backend.hasImage; onActivated: imageView.resetZoom() }
+    Shortcut { sequence: "Ctrl++"; enabled: backend.hasImage; onActivated: imageView.zoomIn() }
+    Shortcut { sequence: "Ctrl+-"; enabled: backend.hasImage; onActivated: imageView.zoomOut() }
 
     ColumnLayout {
         anchors.fill: parent
         spacing: 0
 
-        ScrollView {
-            id: topBarScroll
+        ViewerHeader {
             Layout.fillWidth: true
-            Layout.preferredHeight: topBarRow.implicitHeight + 16
-            clip: true
-            ScrollBar.vertical.policy: ScrollBar.AlwaysOff
-            contentWidth: topBarRow.implicitWidth
-
-            Row {
-                id: topBarRow
-                spacing: 8
-                padding: 8
-
-                RoundedButton { text: "Open"; glyph: "folder-open"; onClicked: openDialog.open() }
-                RoundedButton { text: "Save"; glyph: "save"; enabled: backend.hasImage; onClicked: overwriteConfirmDialog.open() }
-                RoundedButton { text: "Save As"; glyph: "save"; enabled: backend.hasImage; onClicked: saveDialog.open() }
-                Label {
-                    anchors.verticalCenter: parent.verticalCenter
-                    leftPadding: 24
-                    rightPadding: 24
-                    text: backend.hasImage ? (backend.imageWidth + " × " + backend.imageHeight) : ""
-                    color: Theme.muted
-                }
-                RoundedButton {
-                    text: "Slideshow"
-                    glyph: "play"
-                    enabled: backend.hasImage && backend.folderModel.count > 1
-                    onClicked: slideshowLoader.active = true
-                }
-            }
+            onOpenRequested: fileActions.openImage()
+            onSaveRequested: fileActions.saveImage()
+            onSaveAsRequested: fileActions.saveImageAs()
+            onSlideshowRequested: slideshowLoader.active = true
         }
-
         ImageView {
             id: imageView
             Layout.fillWidth: true
             Layout.fillHeight: true
+            onOpenRequested: fileActions.openImage()
         }
-
         EditToolbar {
             Layout.fillWidth: true
             visible: backend.hasImage
             onCropRequested: imageView.startCrop()
         }
-
-        Label {
-            id: errorLabel
+        ViewerStatusBar {
+            id: statusBar
             Layout.fillWidth: true
-            Layout.margins: 4
-            color: Theme.error
-            horizontalAlignment: Text.AlignHCenter
+            zoomPercent: imageView.zoomPercent
         }
     }
 
@@ -124,8 +70,6 @@ ApplicationWindow {
         id: slideshowLoader
         anchors.fill: parent
         active: false
-        sourceComponent: SlideshowOverlay {
-            onClosed: slideshowLoader.active = false
-        }
+        sourceComponent: SlideshowOverlay { onClosed: slideshowLoader.active = false }
     }
 }

@@ -6,13 +6,24 @@ Item {
     id: root
 
     property bool cropActive: false
+    readonly property int zoomPercent: Math.round(viewport.zoomScale * 100)
+    signal openRequested()
+
+    function resetZoom() { viewport.resetZoom() }
+    function zoomIn() { viewport.zoomAt(1.2, viewport.width / 2, viewport.height / 2) }
+    function zoomOut() { viewport.zoomAt(1 / 1.2, viewport.width / 2, viewport.height / 2) }
 
     function startCrop() {
         if (!backend.hasImage)
             return
-        selection.visible = false
         viewport.resetZoom()
         root.cropActive = true
+        selection.x = (img.width - img.paintedWidth) / 2 + img.paintedWidth / 4
+        selection.y = (img.height - img.paintedHeight) / 2 + img.paintedHeight / 4
+        selection.width = img.paintedWidth / 2
+        selection.height = img.paintedHeight / 2
+        selection.visible = true
+        root.forceActiveFocus()
     }
 
     function cancelCrop() {
@@ -39,6 +50,51 @@ Item {
         backend.crop(Math.max(0, px), Math.max(0, py), pw, ph)
         root.cropActive = false
         selection.visible = false
+    }
+
+    Keys.onPressed: function (event) {
+        if (!root.cropActive || root.activeFocus !== root)
+            return
+        if (event.key === Qt.Key_Escape) {
+            root.cancelCrop()
+            event.accepted = true
+            return
+        }
+        if (event.key === Qt.Key_Return || event.key === Qt.Key_Enter) {
+            root.applyCrop()
+            event.accepted = true
+            return
+        }
+        const resize = (event.modifiers & Qt.ShiftModifier) !== 0
+        const step = 10
+        const left = (img.width - img.paintedWidth) / 2
+        const top = (img.height - img.paintedHeight) / 2
+        const right = left + img.paintedWidth
+        const bottom = top + img.paintedHeight
+        if (event.key === Qt.Key_Left) {
+            if (resize)
+                selection.width = Math.max(4, selection.width - step)
+            else
+                selection.x = Math.max(left, selection.x - step)
+        } else if (event.key === Qt.Key_Right) {
+            if (resize)
+                selection.width = Math.min(right - selection.x, selection.width + step)
+            else
+                selection.x = Math.min(right - selection.width, selection.x + step)
+        } else if (event.key === Qt.Key_Up) {
+            if (resize)
+                selection.height = Math.max(4, selection.height - step)
+            else
+                selection.y = Math.max(top, selection.y - step)
+        } else if (event.key === Qt.Key_Down) {
+            if (resize)
+                selection.height = Math.min(bottom - selection.y, selection.height + step)
+            else
+                selection.y = Math.min(bottom - selection.height, selection.y + step)
+        } else {
+            return
+        }
+        event.accepted = true
     }
 
     Connections {
@@ -80,6 +136,17 @@ Item {
                                          : Math.min(0, Math.max(height - scaledH, offsetY))
         }
 
+        function zoomAt(factor, centerX, centerY) {
+            const oldScale = zoomScale
+            const newScale = Math.max(minZoom, Math.min(maxZoom, oldScale * factor))
+            if (newScale === oldScale)
+                return
+            offsetX = centerX - (centerX - offsetX) * newScale / oldScale
+            offsetY = centerY - (centerY - offsetY) * newScale / oldScale
+            zoomScale = newScale
+            clampOffsets()
+        }
+
         Image {
             id: img
             x: viewport.offsetX
@@ -92,6 +159,7 @@ Item {
             smooth: true
             cache: false
             asynchronous: true
+            sourceSize: Qt.size(backend.imageWidth, backend.imageHeight)
             source: backend.hasImage ? ("image://backend/current/" + backend.generation) : ""
 
             BusyIndicator {
@@ -126,16 +194,9 @@ Item {
                         return
                     }
                     wheel.accepted = true
-                    const oldScale = viewport.zoomScale
                     const factor = wheel.angleDelta.y > 0 ? 1.15 : 1 / 1.15
-                    const newScale = Math.max(viewport.minZoom, Math.min(viewport.maxZoom, oldScale * factor))
-                    if (newScale === oldScale)
-                        return
-                    // Keep the content point under the cursor fixed on screen.
-                    viewport.offsetX += wheel.x * (oldScale - newScale)
-                    viewport.offsetY += wheel.y * (oldScale - newScale)
-                    viewport.zoomScale = newScale
-                    viewport.clampOffsets()
+                    const point = mapToItem(viewport, wheel.x, wheel.y)
+                    viewport.zoomAt(factor, point.x, point.y)
                 }
             }
         }
@@ -189,24 +250,47 @@ Item {
         }
     }
 
-    Label {
-        visible: backend.hasImage && !root.cropActive
-        anchors.bottom: parent.bottom
-        anchors.left: parent.left
-        anchors.margins: 10
-        text: viewport.zoomScale > viewport.minZoom + 0.001
-              ? Math.round(viewport.zoomScale * 100) + "%"
-              : "Ctrl+Scroll to zoom"
-        color: Theme.muted
-        font.pixelSize: 12
+    Column {
+        anchors.centerIn: parent
+        visible: !backend.hasImage
+        spacing: 14
+
+        Glyph {
+            anchors.horizontalCenter: parent.horizontalCenter
+            name: "folder-open"
+            width: 48
+            height: 48
+            size: 48
+            color: Theme.muted
+            Accessible.ignored: true
+        }
+        Label {
+            anchors.horizontalCenter: parent.horizontalCenter
+            text: qsTr("Your images, in focus")
+            color: Theme.foreground
+            font.pointSize: Theme.titlePointSize
+            font.weight: Font.Medium
+        }
+        Label {
+            anchors.horizontalCenter: parent.horizontalCenter
+            text: qsTr("Open an image to view and edit it")
+            color: Theme.muted
+            font.pointSize: Theme.bodyPointSize
+        }
+        RoundedButton {
+            anchors.horizontalCenter: parent.horizontalCenter
+            text: qsTr("Open image")
+            glyph: "folder-open"
+            onClicked: root.openRequested()
+        }
     }
 
     Label {
         anchors.centerIn: parent
-        text: "Open an image to get started"
-        visible: !backend.hasImage
-        color: Theme.muted
-        font.pixelSize: 18
+        visible: backend.hasImage && img.status === Image.Error
+        text: qsTr("This image could not be displayed")
+        color: Theme.error
+        font.pointSize: Theme.bodyPointSize
     }
 
     Label {
@@ -214,9 +298,12 @@ Item {
         anchors.top: parent.top
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.topMargin: 8
-        text: "Drag to select the crop area"
+        width: Math.min(parent.width - 24, implicitWidth)
+        wrapMode: Text.WordWrap
+        horizontalAlignment: Text.AlignHCenter
+        text: qsTr("Drag to select · arrows move · Shift+arrows resize · Enter applies")
         color: Theme.foreground
-        font.pixelSize: 13
+        font.pointSize: Theme.bodyPointSize
     }
 
     Row {
@@ -227,12 +314,12 @@ Item {
         spacing: 8
 
         RoundedButton {
-            text: "Apply Crop"
+            text: qsTr("Apply crop")
             enabled: selection.visible && selection.width > 4 && selection.height > 4
             onClicked: root.applyCrop()
         }
         RoundedButton {
-            text: "Cancel"
+            text: qsTr("Cancel")
             onClicked: root.cancelCrop()
         }
     }

@@ -1,0 +1,11 @@
+{
+  "version": 1,
+  "skills": {
+    "qt-qml": {
+      "source": "theqtcompanyrnd/agent-skills",
+      "sourceType": "github",
+      "skillPath": "skills/qt-qml/SKILL.md",
+      "computedHash": "b4f483457bf2deb250053ffe8cffe5727724792bcdca06180d4737184bee9dcb"
+    }
+  }
+}

@@ -23,6 +23,11 @@ folder in fullscreen:
 - Slideshow over the containing folder, with play/pause, prev/next, and
   fullscreen expand (button, F11, or Escape to exit-then-close)
 
+File actions support Ctrl+O, Ctrl+S, and Ctrl+Shift+S. Undo and redo use
+Ctrl+Z and Ctrl+Shift+Z. Zoom with Ctrl+scroll, Ctrl++, Ctrl+-, or Ctrl+0 to
+fit the image again. During crop, arrow keys move the selection,
+Shift+arrow keys resize it, Enter applies, and Escape cancels.
+
 ## Architecture
 
 ```
